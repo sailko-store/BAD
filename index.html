@@ -1,266 +1,385 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BAD STORE</title>
-  <style>
-    body {
-      background-color: #000;
-      font-family: sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      color: #fff;
-    }
-    .container {
-      background-color: #111;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px rgba(255, 255, 0, 0.2);
-      width: 90%;
-      max-width: 400px;
-    }
-    label {
-      display: block;
-      margin: 15px 0 5px;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 12px;
-      margin: 8px 0;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-    input, select {
-      background-color: #222;
-      color: #fff;
-    }
-    .diamond-option {
-      flex: 1 1 45%;
-      padding: 10px;
-      background-color: #222;
-      color: white;
-      border: 2px solid #555;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.3s;
-    }
-    .diamond-option:hover {
-      background-color: #333;
-    }
-    .diamond-option.active {
-      background-color: #ffcc00;
-      color: #000;
-      border-color: #ffcc00;
-    }
-    button {
-      background-color: #ff5722;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
-    }
-    table {
-      width: 100%;
-      margin-top: 30px;
-      border-collapse: collapse;
-      color: #fff;
-    }
-    th, td {
-      padding: 8px;
-      border: 1px solid #555;
-      text-align: center;
-    }
-    thead tr {
-      background-color: #333;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAD STORE - متجر ألعاب فري فاير</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: white;
+            color: black;
+        }
+
+        header {
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #FFD700;
+            color: black;
+        }
+
+        nav a {
+            color: black;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: red;
+        }
+
+        .product {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            margin: 1rem;
+            background-color: white;
+        }
+
+        .product:hover {
+            border-color: red;
+        }
+
+        button {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.8;
+        }
+
+        .auth-form {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border: 1px solid #ddd;
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+        }
+
+        .admin-panel {
+            padding: 2rem;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
+    <!-- الهيكل الرئيسي للمتجر -->
+    <div id="app">
+        <header>
+            <h1>BAD STORE</h1>
+            <nav>
+                <a href="#" onclick="showPage('home')">الرئيسية</a>
+                <a href="#" onclick="showPage('products')">منتجات فري فاير</a>
+                <a href="#" onclick="showPage('cart')">سلة التسوق</a>
+                <a href="#" id="auth-link" onclick="showPage('login')">تسجيل الدخول</a>
+            </nav>
+        </header>
 
-<!-- شريط علوي -->
-<div style="background: #1c1c1c; padding: 10px; border-radius: 10px; margin-bottom: 10px;">
-  <div style="display: flex; align-items: center; gap: 12px; justify-content: flex-start; width: 100%;">
-    <!-- زر القائمة -->
-    <div style="width: 36px; height: 36px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: inset 0 0 0 1px #ccc;">
-      ☰
+        <main>
+            <!-- الصفحة الرئيسية -->
+            <div id="home-page" class="page">
+                <section class="hero" style="background-color: white;">
+                    <h2 style="color: red;">عروض حصرية على فري فاير!</h2>
+                    <p style="color: black;">احصل على أفضل العناصر والبطاقات</p>
+                </section>
+
+                <section class="featured-products">
+                    <h3>المنتجات المميزة</h3>
+                    <div id="featured-products-list"></div>
+                </section>
+            </div>
+
+            <!-- صفحة المنتجات -->
+            <div id="products-page" class="page hidden">
+                <h2>منتجات فري فاير</h2>
+                <div id="products-list"></div>
+            </div>
+
+            <!-- صفحة سلة التسوق -->
+            <div id="cart-page" class="page hidden">
+                <h2>سلة التسوق</h2>
+                <div id="cart-items"></div>
+                <button onclick="showPage('checkout')">الدفع</button>
+            </div>
+
+            <!-- صفحة الدفع -->
+            <div id="checkout-page" class="page hidden">
+                <h2>إتمام الطلب</h2>
+                <div class="payment-methods">
+                    <h3>طرق الدفع:</h3>
+                    <label>
+                        <input type="radio" name="payment" value="bank" checked> الدفع عبر البنك
+                    </label>
+                    <label>
+                        <input type="radio" name="payment" value="mycash"> الدفع عبر ماي كاش
+                    </label>
+                </div>
+                <button onclick="completeOrder()">إتمام الطلب</button>
+            </div>
+
+            <!-- صفحة تسجيل الدخول -->
+            <div id="login-page" class="page hidden">
+                <div class="auth-form">
+                    <h2>تسجيل الدخول</h2>
+                    <input type="email" id="login-email" placeholder="البريد الإلكتروني">
+                    <input type="password" id="login-password" placeholder="كلمة المرور">
+                    <button onclick="login()">تسجيل الدخول</button>
+                    <p>ليس لديك حساب؟ <a href="#" onclick="showPage('register')">إنشاء حساب</a></p>
+                </div>
+            </div>
+
+            <!-- صفحة إنشاء حساب -->
+            <div id="register-page" class="page hidden">
+                <div class="auth-form">
+                    <h2>إنشاء حساب</h2>
+                    <input type="email" id="register-email" placeholder="البريد الإلكتروني">
+                    <input type="password" id="register-password" placeholder="كلمة المرور">
+                    <button onclick="register()">إنشاء حساب</button>
+                </div>
+            </div>
+
+            <!-- لوحة التحكم الإدارية -->
+            <div id="admin-page" class="page hidden">
+                <div class="admin-panel">
+                    <h2>لوحة التحكم الإدارية</h2>
+                    <h3>إضافة منتج جديد</h3>
+                    <input type="text" id="product-name" placeholder="اسم المنتج">
+                    <input type="number" id="product-price" placeholder="السعر">
+                    <textarea id="product-desc" placeholder="الوصف"></textarea>
+                    <button onclick="addProduct()">إضافة منتج</button>
+
+                    <h3>المنتجات الحالية</h3>
+                    <div id="admin-products-list"></div>
+                </div>
+            </div>
+        </main>
+
+        <footer style="background-color: #FFD700; color: black;">
+            <p>الدعم: support@badstore.com</p>
+        </footer>
     </div>
-    <!-- البروفايل -->
-    <div style="width: 36px; height: 36px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: inset 0 0 0 1px #ccc;">
-      👤
-    </div>
-    <!-- كوينز -->
-    <div style="display: flex; align-items: center; background: #fff; border-radius: 20px; padding: 4px 12px; font-weight: bold; color: #1f1f1f;">
-      🪙 <span style="margin-left: 6px;">0</span>
-    </div>
-  </div>
-</div>
 
-<div class="container">
-  <form onsubmit="sendToAPI(event)">
-    <label>معرف اللاعب</label>
-    <input type="number" name="player_id" placeholder="اكتب معرفك بالأرقام" required />
+    <script>
+        // حالة التطبيق
+        const appState = {
+            currentUser: null,
+            products: [
+                { id: 1, name: "بطاقة فري فاير 100 ماس", price: 50, description: "بطاقة شحن لعبة فري فاير" },
+                { id: 2, name: "بطاقة فري فاير 500 ماس", price: 200, description: "بطاقة شحن لعبة فري فاير" },
+                { id: 3, name: "بطاقة فري فاير 1000 ماس", price: 350, description: "بطاقة شحن لعبة فري فاير" }
+            ],
+            cart: []
+        };
 
-    <label>داير كم جواهر 🤔💎</label>
-    <div id="diamond-options" style="display: flex; flex-wrap: wrap; gap: 10px;">
-      <button type="button" class="diamond-option" data-value="110 💎 = 2500ج.س 🪙 10">110 💎 = 🪙 10</button>
-      <button type="button" class="diamond-option" data-value="220 💎 = 5000ج.س 🪙 20">220 💎 = 🪙 20</button>
-      <button type="button" class="diamond-option" data-value="330 💎 = 7500ج.س 🪙 30">330 💎 = 🪙 30</button>
-      <button type="button" class="diamond-option" data-value="520 💎 = 12500ج.س 🪙 50">520 💎 = 🪙 50</button>
-      <button type="button" class="diamond-option" data-value="1080 💎 = 25000ج.س 🪙 100">1080 💎 = 🪙 100</button>
-      <button type="button" class="diamond-option" data-value="2180 💎 = 🪙 200">2180 💎 = 🪙 200</button>
-      <button type="button" class="diamond-option" data-value="عضوية اسبوعية 📦 = 5000ج.س 🪙 20">عضوية اسبوعية 📦 = 🪙 20</button>
-      <button type="button" class="diamond-option" data-value="عضوية شهرية 💳 = 18000ج.س 🪙 70">عضوية شهرية 💳 = 🪙 70</button>
-      <button type="button" class="diamond-option" data-value="بوي باس 🎮 = 7500ج.س 🪙 30">بوي باس 🎮 = 🪙 30</button>
-    </div>
-    <input type="hidden" name="diamonds" id="diamonds" required />
+        // تهيئة المتجر
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProducts();
+            updateAuthUI();
+        });
 
-    <label>طريقة الدفع</label>
-    <select name="payment" required>
-      <option value="">-- اختر الطريقة --</option>
-      <option value="فوري">فوري</option>
-      <option value="بنكك">بنكك</option>
-      <option value="ماي كاشي">ماي كاشي</option>
-    </select>
+        // وظائف الصفحات
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.add('hidden');
+            });
+            document.getElementById(`${pageId}-page`).classList.remove('hidden');
+        }
 
-    <button type="submit">🔥اشحن الآن و استمتع🔥</button>
-  </form>
+        // عرض المنتجات
+        function renderProducts() {
+            const productsList = document.getElementById('products-list');
+            const featuredList = document.getElementById('featured-products-list');
+            
+            productsList.innerHTML = '';
+            featuredList.innerHTML = '';
+            
+            appState.products.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'product';
+                productElement.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p>السعر: ${product.price} جنيه</p>
+                    <button onclick="addToCart(${product.id})">إضافة إلى السلة</button>
+                `;
+                
+                productsList.appendChild(productElement.cloneNode(true));
+                
+                if (product.id <= 3) { // المنتجات المميزة
+                    featuredList.appendChild(productElement);
+                }
+            });
+        }
 
-  <h3 style="text-align:center; margin-top: 30px; color: #ffc107;">📋 سجل الطلبات</h3>
-  <table id="order-log-table">
-    <thead>
-      <tr>
-        <th>الوقت</th>
-        <th>معرف اللاعب</th>
-        <th>العرض</th>
-        <th>الدفع</th>
-        <th>الحالة</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
+        // إدارة السلة
+        function addToCart(productId) {
+            const product = appState.products.find(p => p.id === productId);
+            if (product) {
+                appState.cart.push(product);
+                updateCartUI();
+                alert('تمت إضافة المنتج إلى السلة');
+            }
+        }
 
-<script>
-  const diamondButtons = document.querySelectorAll(".diamond-option");
-  const hiddenInput = document.getElementById("diamonds");
-  const tableBody = document.querySelector("#order-log-table tbody");
+        function updateCartUI() {
+            const cartItems = document.getElementById('cart-items');
+            cartItems.innerHTML = '';
+            
+            appState.cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <span>${item.name}</span>
+                    <span>${item.price} جنيه</span>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+        }
 
-  diamondButtons.forEach(button => {
-    button.addEventListener("click", () => {
-      diamondButtons.forEach(btn => btn.classList.remove("active"));
-      button.classList.add("active");
-      hiddenInput.value = button.dataset.value;
-    });
-  });
+        // نظام المصادقة
+        function login() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            // محاكاة نظام تسجيل الدخول
+            if (email && password) {
+                appState.currentUser = { email };
+                
+                if (email === 'ai8204698@gmail.com') {
+                    showPage('admin');
+                } else {
+                    showPage('home');
+                }
+                
+                updateAuthUI();
+            } else {
+                alert('الرجاء إدخال البريد الإلكتروني وكلمة المرور');
+            }
+        }
 
-  function addOrderLog(playerId, diamonds, payment, status) {
-    const row = document.createElement("tr");
-    const timeCell = document.createElement("td");
-    const idCell = document.createElement("td");
-    const diamondsCell = document.createElement("td");
-    const paymentCell = document.createElement("td");
-    const statusCell = document.createElement("td");
+        function register() {
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            
+            if (email && password) {
+                appState.currentUser = { email };
+                showPage('home');
+                updateAuthUI();
+                alert('تم إنشاء الحساب بنجاح');
+            } else {
+                alert('الرجاء إدخال البريد الإلكتروني وكلمة المرور');
+            }
+        }
 
-    const now = new Date();
-    const timeString = now.getHours().toString().padStart(2, '0') + ":" +
-                       now.getMinutes().toString().padStart(2, '0') + ":" +
-                       now.getSeconds().toString().padStart(2, '0');
+        function logout() {
+            appState.currentUser = null;
+            showPage('home');
+            updateAuthUI();
+        }
 
-    timeCell.textContent = timeString;
-    idCell.textContent = playerId;
-    diamondsCell.textContent = diamonds;
-    paymentCell.textContent = payment;
-    statusCell.textContent = status;
+        function updateAuthUI() {
+            const authLink = document.getElementById('auth-link');
+            
+            if (appState.currentUser) {
+                if (appState.currentUser.email === 'ai8204698@gmail.com') {
+                    authLink.textContent = 'لوحة التحكم';
+                    authLink.setAttribute('onclick', "showPage('admin')");
+                } else {
+                    authLink.textContent = 'تسجيل الخروج';
+                    authLink.setAttribute('onclick', "logout()");
+                }
+            } else {
+                authLink.textContent = 'تسجيل الدخول';
+                authLink.setAttribute('onclick', "showPage('login')");
+            }
+        }
 
-    if (status.includes("⏳")) {
-      statusCell.style.backgroundColor = "#ffc107"; 
-      statusCell.style.color = "#000";
-    } else if (status.includes("✅")) {
-      statusCell.style.backgroundColor = "#4caf50"; 
-      statusCell.style.color = "#fff";
-    } else {
-      statusCell.style.backgroundColor = "#f44336"; 
-      statusCell.style.color = "#fff";
-    }
+        // لوحة التحكم الإدارية
+        function addProduct() {
+            const name = document.getElementById('product-name').value;
+            const price = parseInt(document.getElementById('product-price').value);
+            const desc = document.getElementById('product-desc').value;
+            
+            if (name && price && desc) {
+                const newProduct = {
+                    id: appState.products.length + 1,
+                    name,
+                    price,
+                    description: desc
+                };
+                
+                appState.products.push(newProduct);
+                renderProducts();
+                renderAdminProducts();
+                
+                document.getElementById('product-name').value = '';
+                document.getElementById('product-price').value = '';
+                document.getElementById('product-desc').value = '';
+                
+                alert('تمت إضافة المنتج بنجاح');
+            } else {
+                alert('الرجاء إدخال جميع بيانات المنتج');
+            }
+        }
 
-    row.appendChild(timeCell);
-    row.appendChild(idCell);
-    row.appendChild(diamondsCell);
-    row.appendChild(paymentCell);
-    row.appendChild(statusCell);
-    tableBody.appendChild(row);
-  }
+        function renderAdminProducts() {
+            const adminList = document.getElementById('admin-products-list');
+            adminList.innerHTML = '';
+            
+            appState.products.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'product';
+                productElement.innerHTML = `
+                    <h3>${product.name}</h3>
+                    <p>${product.description}</p>
+                    <p>السعر: ${product.price} جنيه</p>
+                    <button onclick="deleteProduct(${product.id})">حذف</button>
+                `;
+                adminList.appendChild(productElement);
+            });
+        }
 
-  function updateLastOrderStatus(newStatus) {
-    const lastRow = tableBody.lastElementChild;
-    const statusCell = lastRow.querySelector("td:last-child");
-    statusCell.textContent = newStatus;
+        function deleteProduct(productId) {
+            appState.products = appState.products.filter(p => p.id !== productId);
+            renderProducts();
+            renderAdminProducts();
+        }
 
-    if (newStatus.includes("✅")) {
-      statusCell.style.backgroundColor = "#4caf50";
-      statusCell.style.color = "#fff";
-    } else {
-      statusCell.style.backgroundColor = "#f44336";
-      statusCell.style.color = "#fff";
-    }
-  }
-
-  function sendToAPI(event) {
-    event.preventDefault();
-    const playerId = document.querySelector('input[name="player_id"]').value;
-    const diamonds = document.getElementById("diamonds").value;
-    const payment = document.querySelector('select[name="payment"]').value;
-
-    if (!playerId || !diamonds || !payment) {
-      alert("يرجى تعبئة جميع الحقول.");
-      return;
-    }
-
-    const packageMap = {
-      "110 💎 = 2500ج.س 🪙 10": 1,
-      "220 💎 = 5000ج.س 🪙 20": 2,
-      "330 💎 = 7500ج.س 🪙 30": 3,
-      "520 💎 = 12500ج.س 🪙 50": 4,
-      "1080 💎 = 25000ج.س 🪙 100": 5,
-      "2180 💎 = 🪙 200": 6,
-      "عضوية اسبوعية 📦 = 5000ج.س 🪙 20": 7,
-      "عضوية شهرية 💳 = 18000ج.س 🪙 70": 8,
-      "بوي باس 🎮 = 🪙 30": 9
-    };
-    const packageName = packageMap[diamonds] || 0;
-    const apiKey = 'YOUR_API_KEY'; // أضف مفتاح API الحقيقي هنا
-
-    addOrderLog(playerId, diamonds, payment, "⏳ قيد الانتظار");
-
-    fetch('https://api.yourdomain.com/api/v1/external/topup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey
-      },
-      body: JSON.stringify({
-        playerId: playerId,
-        packageName: packageName
-      })
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('✅ Success:', data);
-      updateLastOrderStatus("✅ تم الشحن بنجاح");
-    })
-    .catch(error => {
-      console.error('❌ Error:', error);
-      updateLastOrderStatus("❌ فشل في الشحن");
-    });
-  }
-</script>
-
+        // إتمام الطلب
+        function completeOrder() {
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+            
+            if (appState.cart.length > 0) {
+                alert(`تم إتمام الطلب بنجاح! طريقة الدفع: ${paymentMethod === 'bank' ? 'البنك' : 'ماي كاش'}`);
+                appState.cart = [];
+                updateCartUI();
+                showPage('home');
+            } else {
+                alert('السلة فارغة، الرجاء إضافة منتجات');
+            }
+        }
+    </script>
 </body>
-      </html>
+                      </html>
