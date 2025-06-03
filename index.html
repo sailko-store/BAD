@@ -24,13 +24,68 @@
       width: 90%;
       max-width: 400px;
     }
-    ...
+    label {
+      display: block;
+      margin: 15px 0 5px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    input, select {
+      background-color: #222;
+      color: #fff;
+    }
+    .diamond-option {
+      flex: 1 1 45%;
+      padding: 10px;
+      background-color: #222;
+      color: white;
+      border: 2px solid #555;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .diamond-option:hover {
+      background-color: #333;
+    }
+    .diamond-option.active {
+      background-color: #ffcc00;
+      color: #000;
+      border-color: #ffcc00;
+    }
+    button {
+      background-color: #ff5722;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
+    }
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+      color: #fff;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #555;
+      text-align: center;
+    }
+    thead tr {
+      background-color: #333;
+    }
   </style>
 </head>
 <body>
 
 <!-- شريط علوي -->
-<div id="top-bar" style="background: #1c1c1c; padding: 10px; border-radius: 10px; margin-bottom: 10px;">
+<div style="background: #1c1c1c; padding: 10px; border-radius: 10px; margin-bottom: 10px;">
   <div style="display: flex; align-items: center; gap: 12px; justify-content: flex-start; width: 100%;">
     <!-- زر القائمة -->
     <div style="width: 36px; height: 36px; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: inset 0 0 0 1px #ccc;">
@@ -46,3 +101,166 @@
     </div>
   </div>
 </div>
+
+<div class="container">
+  <form onsubmit="sendToAPI(event)">
+    <label>معرف اللاعب</label>
+    <input type="number" name="player_id" placeholder="اكتب معرفك بالأرقام" required />
+
+    <label>داير كم جواهر 🤔💎</label>
+    <div id="diamond-options" style="display: flex; flex-wrap: wrap; gap: 10px;">
+      <button type="button" class="diamond-option" data-value="110 💎 = 2500ج.س 🪙 10">110 💎 = 🪙 10</button>
+      <button type="button" class="diamond-option" data-value="220 💎 = 5000ج.س 🪙 20">220 💎 = 🪙 20</button>
+      <button type="button" class="diamond-option" data-value="330 💎 = 7500ج.س 🪙 30">330 💎 = 🪙 30</button>
+      <button type="button" class="diamond-option" data-value="520 💎 = 12500ج.س 🪙 50">520 💎 = 🪙 50</button>
+      <button type="button" class="diamond-option" data-value="1080 💎 = 25000ج.س 🪙 100">1080 💎 = 🪙 100</button>
+      <button type="button" class="diamond-option" data-value="2180 💎 = 🪙 200">2180 💎 = 🪙 200</button>
+      <button type="button" class="diamond-option" data-value="عضوية اسبوعية 📦 = 5000ج.س 🪙 20">عضوية اسبوعية 📦 = 🪙 20</button>
+      <button type="button" class="diamond-option" data-value="عضوية شهرية 💳 = 18000ج.س 🪙 70">عضوية شهرية 💳 = 🪙 70</button>
+      <button type="button" class="diamond-option" data-value="بوي باس 🎮 = 7500ج.س 🪙 30">بوي باس 🎮 = 🪙 30</button>
+    </div>
+    <input type="hidden" name="diamonds" id="diamonds" required />
+
+    <label>طريقة الدفع</label>
+    <select name="payment" required>
+      <option value="">-- اختر الطريقة --</option>
+      <option value="فوري">فوري</option>
+      <option value="بنكك">بنكك</option>
+      <option value="ماي كاشي">ماي كاشي</option>
+    </select>
+
+    <button type="submit">🔥اشحن الآن و استمتع🔥</button>
+  </form>
+
+  <h3 style="text-align:center; margin-top: 30px; color: #ffc107;">📋 سجل الطلبات</h3>
+  <table id="order-log-table">
+    <thead>
+      <tr>
+        <th>الوقت</th>
+        <th>معرف اللاعب</th>
+        <th>العرض</th>
+        <th>الدفع</th>
+        <th>الحالة</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<script>
+  const diamondButtons = document.querySelectorAll(".diamond-option");
+  const hiddenInput = document.getElementById("diamonds");
+  const tableBody = document.querySelector("#order-log-table tbody");
+
+  diamondButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      diamondButtons.forEach(btn => btn.classList.remove("active"));
+      button.classList.add("active");
+      hiddenInput.value = button.dataset.value;
+    });
+  });
+
+  function addOrderLog(playerId, diamonds, payment, status) {
+    const row = document.createElement("tr");
+    const timeCell = document.createElement("td");
+    const idCell = document.createElement("td");
+    const diamondsCell = document.createElement("td");
+    const paymentCell = document.createElement("td");
+    const statusCell = document.createElement("td");
+
+    const now = new Date();
+    const timeString = now.getHours().toString().padStart(2, '0') + ":" +
+                       now.getMinutes().toString().padStart(2, '0') + ":" +
+                       now.getSeconds().toString().padStart(2, '0');
+
+    timeCell.textContent = timeString;
+    idCell.textContent = playerId;
+    diamondsCell.textContent = diamonds;
+    paymentCell.textContent = payment;
+    statusCell.textContent = status;
+
+    if (status.includes("⏳")) {
+      statusCell.style.backgroundColor = "#ffc107"; 
+      statusCell.style.color = "#000";
+    } else if (status.includes("✅")) {
+      statusCell.style.backgroundColor = "#4caf50"; 
+      statusCell.style.color = "#fff";
+    } else {
+      statusCell.style.backgroundColor = "#f44336"; 
+      statusCell.style.color = "#fff";
+    }
+
+    row.appendChild(timeCell);
+    row.appendChild(idCell);
+    row.appendChild(diamondsCell);
+    row.appendChild(paymentCell);
+    row.appendChild(statusCell);
+    tableBody.appendChild(row);
+  }
+
+  function updateLastOrderStatus(newStatus) {
+    const lastRow = tableBody.lastElementChild;
+    const statusCell = lastRow.querySelector("td:last-child");
+    statusCell.textContent = newStatus;
+
+    if (newStatus.includes("✅")) {
+      statusCell.style.backgroundColor = "#4caf50";
+      statusCell.style.color = "#fff";
+    } else {
+      statusCell.style.backgroundColor = "#f44336";
+      statusCell.style.color = "#fff";
+    }
+  }
+
+  function sendToAPI(event) {
+    event.preventDefault();
+    const playerId = document.querySelector('input[name="player_id"]').value;
+    const diamonds = document.getElementById("diamonds").value;
+    const payment = document.querySelector('select[name="payment"]').value;
+
+    if (!playerId || !diamonds || !payment) {
+      alert("يرجى تعبئة جميع الحقول.");
+      return;
+    }
+
+    const packageMap = {
+      "110 💎 = 2500ج.س 🪙 10": 1,
+      "220 💎 = 5000ج.س 🪙 20": 2,
+      "330 💎 = 7500ج.س 🪙 30": 3,
+      "520 💎 = 12500ج.س 🪙 50": 4,
+      "1080 💎 = 25000ج.س 🪙 100": 5,
+      "2180 💎 = 🪙 200": 6,
+      "عضوية اسبوعية 📦 = 5000ج.س 🪙 20": 7,
+      "عضوية شهرية 💳 = 18000ج.س 🪙 70": 8,
+      "بوي باس 🎮 = 🪙 30": 9
+    };
+    const packageName = packageMap[diamonds] || 0;
+    const apiKey = 'YOUR_API_KEY'; // أضف مفتاح API الحقيقي هنا
+
+    addOrderLog(playerId, diamonds, payment, "⏳ قيد الانتظار");
+
+    fetch('https://api.yourdomain.com/api/v1/external/topup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey
+      },
+      body: JSON.stringify({
+        playerId: playerId,
+        packageName: packageName
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('✅ Success:', data);
+      updateLastOrderStatus("✅ تم الشحن بنجاح");
+    })
+    .catch(error => {
+      console.error('❌ Error:', error);
+      updateLastOrderStatus("❌ فشل في الشحن");
+    });
+  }
+</script>
+
+</body>
+      </html>
